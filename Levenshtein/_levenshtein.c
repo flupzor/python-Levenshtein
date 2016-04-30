@@ -761,22 +761,41 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
 
     for (i = 0; i < len1; i++) {
         o = PyList_GET_ITEM(arg1, i);
-        if (! PyInt_CheckExact(o)) {
+        if (PyInt_CheckExact(o)) {
+            string1[i] = PyInt_AS_LONG(o);
+        } else if (PyLong_CheckExact(o)) {
+            long r;
+            r = PyLong_AsLong(o);
+            if (r == -1) {
+                // TODO
+                return -1;
+            }
+            string1[i] = r;
+        } else {
             PyErr_Format(PyExc_TypeError,
                          "%s expected two Strings, two Unicodes or two lists of Integers", name);
             return -1;
         }
-        string1[i] = PyInt_AS_LONG(o);
     }
 
     for (i = 0; i < len2; i++) {
         o = PyList_GET_ITEM(arg2, i);
-        if (! PyInt_CheckExact(o)) {
+
+        if (PyInt_CheckExact(o)) {
+            string2[i] = PyInt_AS_LONG(o);
+        } else if (PyLong_CheckExact(o)) {
+            long r;
+            r = PyLong_AsLong(o);
+            if (r == -1) {
+                // TODO
+                return -1;
+            }
+            string2[i] = r;
+        } else {
             PyErr_Format(PyExc_TypeError,
                          "%s expected two Strings, two Unicodes or two lists of Integers", name);
             return -1;
         }
-        string2[i] = PyInt_AS_LONG(o);
     }
 
     {
