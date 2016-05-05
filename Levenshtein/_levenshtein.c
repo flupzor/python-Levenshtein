@@ -740,7 +740,7 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
   else if (PyObject_TypeCheck(arg1, &PyList_Type)
       && PyObject_TypeCheck(arg2, &PyList_Type)) {
 
-    long *string1, *string2;
+    long long *string1, *string2;
     PyObject *o;
     int i;
 
@@ -764,8 +764,8 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
         if (PyInt_CheckExact(o)) {
             string1[i] = PyInt_AS_LONG(o);
         } else if (PyLong_CheckExact(o)) {
-            long r;
-            r = PyLong_AsLong(o);
+            long long r;
+            r = PyLong_AsLongLong(o);
             if (r == -1) {
                 // TODO
                 return -1;
@@ -784,8 +784,8 @@ levenshtein_common(PyObject *args, const char *name, size_t xcost,
         if (PyInt_CheckExact(o)) {
             string2[i] = PyInt_AS_LONG(o);
         } else if (PyLong_CheckExact(o)) {
-            long r;
-            r = PyLong_AsLong(o);
+            long long r;
+            r = PyLong_AsLongLong(o);
             if (r == -1) {
                 // TODO
                 return -1;
@@ -2618,8 +2618,8 @@ lev_u_edit_distance(size_t len1, const lev_wchar *string1,
 
 
 _LEV_STATIC_PY size_t
-lev_l_edit_distance(size_t len1, const long *string1,
-                    size_t len2, const long *string2,
+lev_l_edit_distance(size_t len1, const long long *string1,
+                    size_t len2, const long long *string2,
                     int xcost)
 {
   size_t i;
@@ -2650,7 +2650,7 @@ lev_l_edit_distance(size_t len1, const long *string1,
   /* make the inner cycle (i.e. string2) the longer one */
   if (len1 > len2) {
     size_t nx = len1;
-    const long *sx = string1;
+    const long long *sx = string1;
     len1 = len2;
     len2 = nx;
     string1 = string2;
@@ -2658,8 +2658,8 @@ lev_l_edit_distance(size_t len1, const long *string1,
   }
   /* check len1 == 1 separately */
   if (len1 == 1) {
-    long z = *string1;
-    const long *p = string2;
+    long long z = *string1;
+    const long long *p = string2;
     for (i = len2; i; i--) {
       if (*(p++) == z)
         return len2 - 1;
@@ -2684,8 +2684,8 @@ lev_l_edit_distance(size_t len1, const long *string1,
   if (xcost) {
     for (i = 1; i < len1; i++) {
       size_t *p = row + 1;
-      const long char1 = string1[i - 1];
-      const long *char2p = string2;
+      const long long char1 = string1[i - 1];
+      const long long *char2p = string2;
       size_t D = i - 1;
       size_t x = i;
       while (p <= end) {
@@ -2708,8 +2708,8 @@ lev_l_edit_distance(size_t len1, const long *string1,
     row[0] = len1 - half - 1;
     for (i = 1; i < len1; i++) {
       size_t *p;
-      const long char1 = string1[i - 1];
-      const long *char2p;
+      const long long char1 = string1[i - 1];
+      const long long *char2p;
       size_t D, x;
       /* skip the upper triangle */
       if (i >= len1 - half) {
